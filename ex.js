@@ -33,7 +33,19 @@ const url = require('url');
 // functions
 
 const replaceTemplate = (template,product) =>{
-    
+    let output = template.replace(/{%PRODUCTNAME%}/g,product.productName);
+    output = output.replace(/{%IMAGE%}/g,product.image);
+    output = output.replace(/{%QUANTITY%}/g,product.quantity);
+    output = output.replace(/{%PRICE%}/g,product.price);
+    output = output.replace(/{%ID%}/g,product.id);
+    output = output.replace(/{%FROM%}/g,product.from);
+    output = output.replace(/{%NUTRIENTS%}/g,product.nutrients);
+    output = output.replace(/{%NUTRIENTS%}/g,product.nutrients);
+    output = output.replace(/{%DESCRIPTION%}/g,product.description);
+
+    if (!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g,'not-organic');
+    return output;
+
 }
 
 
@@ -56,11 +68,16 @@ const server = http.createServer((req,res)=>{
 
     if (pathName === '/' || pathName === '/overview' ){
 
-        res.writeHead(200,{'Content-type':'text/html'})
+        res.writeHead(200,{'Content-type':'text/html'});
 
-        const cardsHtml = dataObj.map(element => replaceTemplate(tempCard,element))
+        const cardsHtml = dataObj.map(element => replaceTemplate(tempCard,element));
 
-        res.end(tempOverview);
+        console.log(cardsHtml);
+        out = cardsHtml.join('')
+
+        output = tempOverview.replace('{%PRODUCT_CARDS%}',out)
+
+        res.end(output);
     }
 
     // product page
